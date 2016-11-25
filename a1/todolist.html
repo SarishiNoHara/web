@@ -1,0 +1,241 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>todolist page</title>
+        <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Calligraffitti">
+        <style>
+*{
+    margin:0px;
+    padding:0px;
+}
+
+body{
+    margin:0px;
+    padding:0px;
+    background:white;
+}
+
+.class{
+    margin:0 auto;
+    width:662px;
+    background:#000;
+}
+
+#top{
+    width:100%;
+    height:80px;
+    background:white;
+    text-align:center;
+}
+
+input[type=text] {
+    width: 130px;
+    box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 10px;
+    background-color: white;
+        <!--background-image: url('searchicon.png');-->
+    background-position: 10px 10px; 
+    background-repeat: no-repeat;
+    padding: 10px 10px 10px 20px;
+    -webkit-transition: width 0.4s ease-in-out;
+    transition: width 0.4s ease-in-out;
+    positive:absolute;
+    margin-left:-200px;
+    margin-top:50px;
+}
+
+.add {
+    float:right;
+        border :0px;
+    margin-right:10px;
+    margin-top:45px;
+}
+
+.add img{
+    width:40px;
+    height:40px;
+}
+
+
+#div2{
+    float:right;
+    width:100%;
+    height:600px;
+    background:black;
+}
+
+#div2 img{
+    position: relative;
+}
+
+#div3{
+    height:100px;
+    background:white;
+}
+
+#nav{
+    width:100%;
+    height:1px;
+    background:grey;
+}
+
+#left{
+    width:150px;
+    height:600px;
+    background:white;
+    float:left;
+}
+
+#right{
+    width:510px;
+    height:600px;
+    background:white;
+    float:right;
+}
+
+
+#icon img{
+    height: 70px;
+    width:110px;
+    position: relative;
+    float:left;
+    margin-top:20px;
+    margin-left:20px;
+}
+
+#items {
+    margin-top:20px;
+    text-align:center;
+    font-size:30px;
+    font-family:Calligraffitti;
+}
+
+#ic {
+    font-size:15px;
+    font-family:Calligraffitti;
+    margin-left:45px;
+}
+
+#today {
+    margin-top:20px;
+    margin-left:50px;
+    font-size:30px;
+    font-family:Calligraffitti;
+}
+#tc {   
+    float:left;
+    font-size:15px;
+    font-family:Calligraffitti;
+    margin-left:45px;
+}
+
+.rating {
+    float:left;
+    margin-left:45px;
+
+}
+
+.rating {
+    unicode-bidi: bidi-override;
+    direction: rtl;
+}
+.rating > span {
+    display: inline-block;
+    position: relative;
+    width: 1.1em;
+}
+.rating > span:hover:before,
+.rating > span:hover ~ span:before {
+    content: "\2605";
+    position: absolute;
+}
+
+.date {
+    float:left;
+    margin-left:40px;
+    font-size:15px;
+    font-family:Calligraffitti;
+}
+
+.btn {
+    float:left;
+        border :0px;
+}
+
+.btn img{
+    width:20px;
+    height:20px;
+}
+
+.edit {
+    float:left;
+    margin-left:80px;
+}
+
+
+        </style>
+
+    </head>
+    <body>
+        <div class="class">
+            <div id="top">
+                <div id="icon">
+                    <img src="icon.png">
+                </div>
+
+                <input id="search" type="text" name="search" placeholder="Search..">
+
+
+                <button class="add" type="submit"><img src="set.png"></button>
+                <button class="add" type="submit"><img src="reminder.png"></button>
+                <button class="add" type="submit"><img src="add.png"></button>   
+
+            </div>
+            <div id="div2">
+                <div id="nav"></div>
+                <div id="left">
+                    <h2 id="items">Items</h2>
+                    <form id = "ic" action="">
+                        <input type="radio" name="item" value="home"> Home<br>
+                        <input type="radio" name="item" value="work"> Work<br>
+                        <input type="radio" name="item" value="personal"> Personal
+                    </form>
+
+                </div>
+                <div id="right">
+                    <h2 id="today">Today</h2>
+                    <form id= "tc" action="">
+                        <input type="checkbox" name="task" value="code">Code<br>
+                        <input type="checkbox" name="task" value="read">Read<br>
+                        <input type="checkbox" name="task" value="shopping">Shopping
+                    </form>
+
+                    <div class="rating">
+                        <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><br>
+                        <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span><br>
+                        <span>☆</span><span>☆</span><span>☆</span><span>☆</span><span>☆</span>
+                    </div>
+
+                    <div class="date">
+                        <span>01.11</span><br>
+                        <span>01.11</span><br>
+                        <span>01.11</span>
+                    </div>
+
+                    <div class="edit">
+                        <button class="btn" type="submit" ><img src="del.png"></button>
+                        <button class="btn" type="submit" ><img src="edit.png"></button><br>
+                        <button class="btn" type="submit" ><img src="del.png"></button>
+                        <button class="btn" type="submit" ><img src="edit.png"></button><br>
+                        <button class="btn" type="submit" ><img src="del.png"></button>
+                        <button class="btn" type="submit" ><img src="edit.png"></button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+    </body></html>
