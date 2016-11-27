@@ -1,0 +1,41 @@
+<!doctype html>
+<head>
+    <meta charset=UTF-8>
+    <title>todolist</title>
+    <link rel="stylesheet" href="todo.css">
+</head>
+<body>
+    <div class="container">
+        <p>
+        <label for="new-task">Add Item</label><input id="new-task" type="text">
+        <label for="new-date">date</label><input id="new-date" type="text" class="date >
+
+        <label for="new-rate">rate</label><input id="new-rate" type="text">
+        <button>Add</button>
+        </p>
+
+
+        <h3>Todo</h3>
+        <ul id="incomplete-tasks">
+
+        </ul>
+
+        <h3>Completed</h3>
+        <ul id="completed-tasks">
+
+        </ul>
+    </div>
+    <script type="text/javascript" src="js/app.js"></script>
+    <script type="text/javascript" src="todo.js"></script>
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <!--    <link rel="stylesheet" href="/resources/demos/style.css">-->
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+    $( function() {
+    $( ".date" ).datepicker();
+    } );
+    </script>
+</body>
+</html>
