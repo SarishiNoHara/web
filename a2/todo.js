@@ -1,18 +1,16 @@
-// Problem: User interaction doesn't provide desired results.
-// Solution: Add interactivity so the user can manage daily tasks
-
 var taskInput = document.getElementById("new-task");
 var dateInput = document.getElementById("new-date");
 var rateInput = document.getElementById("new-rate");
 var addButton = document.getElementsByTagName("button")[0];
 var incompleteTasksHolder = document.getElementById("incomplete-tasks");
 var completedTasksHolder = document.getElementById("completed-tasks");
+var sortTasksByDateHolder = document.getElementById("dateResults");
+var sortTasksByRatingHolder = document.getElementById("rateResults");
 
 //New Task List Item
 var createNewTaskElement = function(taskString,date,rate) {
     //Create List Item
     var listItem = document.createElement("li");
-
     //input (checkbox)
     var checkBox = document.createElement("input"); // checkbox
     //label
@@ -65,6 +63,42 @@ var createNewTaskElement = function(taskString,date,rate) {
     return listItem;
 }
 
+$( function() {
+    $( ".date" ).datepicker();
+} );
+
+var sortByDate = function() {
+    $("#dateResults").children("li").remove();
+    var $list = $("#incomplete-tasks,#completed-tasks");
+    var $listItem = $list.children("li");
+    var listItem1 = $listItem.clone();
+    listItem1.children("button").remove();
+    var listItem1 = 
+    listItem1.sort(function(a,b) {
+        var c = new Date($(a).children(".datelabel").text());
+        var d = new Date($(b).children(".datelabel").text());
+        return d - c;
+    });
+    for(var i =0; i < listItem1.length;i++) {
+        sortTasksByDateHolder.appendChild(listItem1[i]);
+    }
+}
+
+var sortByRating = function() {
+ $("#rateResults").children("li").remove();
+    var $list = $("#incomplete-tasks,#completed-tasks");
+    var $listItem = $list.children("li");
+    var listItem1 = $listItem.clone();
+    listItem1.children("button").remove();
+    listItem1.sort(function(a,b) {
+        var c = new Date($(a).children(".ratelabel").text());
+        var d = new Date($(b).children(".ratelabel").text());
+        return d - c;
+    });
+    for(var i =0; i < listItem1.length;i++) {
+        sortTasksByRatingHolder.appendChild(listItem1[i]);
+    }
+}
 
 // Add a new task
 var addTask = function() {
@@ -110,15 +144,12 @@ var editTask = function() {
         datelabel.innerText = editdateInput.value;
         ratelabel.innerText = editrateInput.value;
 
-
     } else {
         //Switch to .editMode
         //input value becomes the label's text
         editInput.value = label.innerText;
         editdateInput.value = datelabel.innerText;
         editrateInput.value = ratelabel.innerText;
-
-
     }
 
     // Toggle .editMode on the parent
@@ -192,4 +223,6 @@ for(var i = 0; i <  incompleteTasksHolder.children.length; i++) {
 for(var i = 0; i <  completedTasksHolder.children.length; i++) {
     // bind events to list item's children (taskIncompleted)
     bindTaskEvents(completedTasksHolder.children[i], taskIncomplete); 
+
 }
+
