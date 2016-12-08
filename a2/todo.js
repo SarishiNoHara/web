@@ -8,7 +8,7 @@ var sortTasksByDateHolder = document.getElementById("dateResults");
 var sortTasksByRatingHolder = document.getElementById("rateResults");
 
 //New Task List Item
-var createNewTaskElement = function(taskString,date,rate) {
+var createNewTaskElement = function(taskString, date, rate) {
     //Create List Item
     var listItem = document.createElement("li");
     //input (checkbox)
@@ -19,9 +19,9 @@ var createNewTaskElement = function(taskString,date,rate) {
     var editInput = document.createElement("input"); // text
     //button.edit
     var datelabel = document.createElement("label");
-    var editdateInput = document.createElement("input"); 
+    var editdateInput = document.createElement("input");
     var ratelabel = document.createElement("label");
-    var editrateInput = document.createElement("input"); 
+    var editrateInput = document.createElement("input");
     var editButton = document.createElement("button");
     //button.delete
     var deleteButton = document.createElement("button");
@@ -63,9 +63,9 @@ var createNewTaskElement = function(taskString,date,rate) {
     return listItem;
 }
 
-$( function() {
-    $( ".date" ).datepicker();
-} );
+$(function() {
+    $(".date").datepicker();
+});
 
 var sortByDate = function() {
     $("#dateResults").children("li").remove();
@@ -73,29 +73,29 @@ var sortByDate = function() {
     var $listItem = $list.children("li");
     var listItem1 = $listItem.clone();
     listItem1.children("button").remove();
-    var listItem1 = 
-    listItem1.sort(function(a,b) {
-        var c = new Date($(a).children(".datelabel").text());
-        var d = new Date($(b).children(".datelabel").text());
-        return d - c;
-    });
-    for(var i =0; i < listItem1.length;i++) {
+    var listItem1 =
+        listItem1.sort(function(a, b) {
+            var c = new Date($(a).children(".datelabel").text());
+            var d = new Date($(b).children(".datelabel").text());
+            return d - c;
+        });
+    for (var i = 0; i < listItem1.length; i++) {
         sortTasksByDateHolder.appendChild(listItem1[i]);
     }
 }
 
 var sortByRating = function() {
- $("#rateResults").children("li").remove();
+    $("#rateResults").children("li").remove();
     var $list = $("#incomplete-tasks,#completed-tasks");
     var $listItem = $list.children("li");
     var listItem1 = $listItem.clone();
     listItem1.children("button").remove();
-    listItem1.sort(function(a,b) {
+    listItem1.sort(function(a, b) {
         var c = new Date($(a).children(".ratelabel").text());
         var d = new Date($(b).children(".ratelabel").text());
         return d - c;
     });
-    for(var i =0; i < listItem1.length;i++) {
+    for (var i = 0; i < listItem1.length; i++) {
         sortTasksByRatingHolder.appendChild(listItem1[i]);
     }
 }
@@ -104,14 +104,14 @@ var sortByRating = function() {
 var addTask = function() {
     console.log("Add task...");
     //Create a new list item with the text from #new-task:
-    var listItem = createNewTaskElement(taskInput.value,dateInput.value,rateInput.value);
+    var listItem = createNewTaskElement(taskInput.value, dateInput.value, rateInput.value);
     //Append listItem to incompleteTasksHolder
     incompleteTasksHolder.appendChild(listItem);
-    bindTaskEvents(listItem, taskCompleted);  
+    bindTaskEvents(listItem, taskCompleted);
 
-    taskInput.value = "";   
-    dateInput.value = "";  
-    rateInput.value = "";  
+    taskInput.value = "";
+    dateInput.value = "";
+    rateInput.value = "";
 }
 
 // Edit an existing task
@@ -119,24 +119,26 @@ var editTask = function() {
     console.log("Edit Task...");
 
     var listItem = this.parentNode;
-
+    alert(listItem);
+    alert(listItem.innerText);
     var editInput = listItem.querySelector(".task")
-        var label = listItem.querySelector(".tasklabel");
+    var label = listItem.querySelector(".tasklabel");
 
     var editdateInput = listItem.querySelector(".dateinput")
-        var datelabel = listItem.querySelector(".datelabel");
+    var datelabel = listItem.querySelector(".datelabel");
 
     var editrateInput = listItem.querySelector(".rateinput")
-        var ratelabel = listItem.querySelector(".ratelabel");
+    var ratelabel = listItem.querySelector(".ratelabel");
 
-    $( function() {
-        $( ".dateinput" ).datepicker();
-    } );
+    $(function() {
+        $(".dateinput").datepicker();
+    });
 
 
     var containsClass = listItem.classList.contains("editMode");
+    alert(containsClass);
     //if the class of the parent is .editMode 
-    if(containsClass) {
+    if (containsClass) {
 
         //switch from .editMode 
         //Make label text become the input's value
@@ -154,7 +156,7 @@ var editTask = function() {
 
     // Toggle .editMode on the parent
     listItem.classList.toggle("editMode");
-
+    alert(containsClass);
 }
 
 
@@ -215,14 +217,13 @@ addButton.addEventListener("click", ajaxRequest);
 
 
 // Cycle over the incompleteTaskHolder ul list items
-for(var i = 0; i <  incompleteTasksHolder.children.length; i++) {
+for (var i = 0; i < incompleteTasksHolder.children.length; i++) {
     // bind events to list item's children (taskCompleted)
     bindTaskEvents(incompleteTasksHolder.children[i], taskCompleted);
 }
 // Cycle over the completeTaskHolder ul list items
-for(var i = 0; i <  completedTasksHolder.children.length; i++) {
+for (var i = 0; i < completedTasksHolder.children.length; i++) {
     // bind events to list item's children (taskIncompleted)
-    bindTaskEvents(completedTasksHolder.children[i], taskIncomplete); 
+    bindTaskEvents(completedTasksHolder.children[i], taskIncomplete);
 
 }
-

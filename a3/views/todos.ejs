@@ -9,7 +9,7 @@
        
         
         <p>
-        <form method="post" action = "/todos"> 
+        <form id = "add" method="post" action = "/todos"> 
         <label for="new-task">Add Item</label><input id="new-task" type="text" name="message">
         <label for="new-date">date</label><input id="new-date" type="text" class="date" name = "date">
         <label for="new-rate">rate</label><input id="new-rate" type="text" name="rating">
@@ -40,17 +40,22 @@
         <h3>Todo</h3>
         <ul id="incomplete-tasks">
         
-        <% for(var i of ejstodos) {%>
+        <% for(var i=0; i < ejstodos.length; i++) {%>
+         
         <li>
-        <input type="checkbox">
-        <label class="tasklabel"><%= i.message %></label>
-        <input type="text" class="task">
-        <label class="datelabel"><%= i.date %></label>
-        <input type="text" class="dateinput">
-        <label class="ratelabel"><%= i.rating %></label>
-        <input type="text" class="rateinput">
-        <button class="edit">Edit</button>
-        <button class="delete">Delete</button>
+        
+        <form class="form">
+        <button class="checkbox" type="submit" formmethod="post" formaction="/todo/<%= i %>" >o</button>
+        <label class="tasklabel"><%= ejstodos[i].message %></label>
+        <input type="text" class="task" name="message" value="<%= ejstodos[i].message %>">
+        <label class="datelabel"><%= ejstodos[i].date %></label>
+        <input type="text" class="dateinput" name="date" value="<%= ejstodos[i].date %>">
+        <label class="ratelabel"><%= ejstodos[i].rating %></label>
+        <input type="text" class="rateinput" name="rating" value="<%= ejstodos[i].rating %>">
+        <button class="delete" type="submit" formmethod="post" formaction="/delete/todo/<%= i %>" >Delete</button>
+        <button class="update" type="submit" formmethod="post" formaction="/update/todo/<%= i %>" >Update</button>
+        </form>
+        <button class="edit">Edit</button>   <!--放在form里面的button都会。。。。。-->
         </li>
         <% } %>
 
@@ -59,19 +64,25 @@
         <h3>Completed</h3>
         <ul id="completed-tasks">
 
-        <% for(var i of ejsdone) { %>
+     <% for(var i=0; i < ejsdone.length; i++) {%>
+         
         <li>
-        <input type="checkbox" checked>
-        <label class="tasklabel"><%= i.message%></label>
-        <input type="text" class="task">
-        <label class="datelabel"><%= i.date %></label>
-        <input type="text" class="dateinput">
-        <label class="ratelabel"><%= i.rating %></label>
-        <input type="text" class="rateinput">
-        <button class="edit">Edit</button>
-        <button class="delete">Delete</button>
+        
+        <form class="form">
+        <button class="checkbox" type="submit" formmethod="post" formaction="/done/<%= i %>" >o</button>
+        <label class="tasklabel"><%= ejsdone[i].message %></label>
+        <input type="text" class="task" name="message" value="<%= ejsdone[i].message %>">
+        <label class="datelabel"><%= ejsdone[i].date %></label>
+        <input type="text" class="dateinput" name="date" value="<%= ejsdone[i].date %>">
+        <label class="ratelabel"><%= ejsdone[i].rating %></label>
+        <input type="text" class="rateinput" name="rating" value="<%= ejsdone[i].rating %>">
+        <button class="delete" type="submit" formmethod="post" formaction="/delete/done/<%= i %>" >Delete</button>
+        <button class="update" type="submit" formmethod="post" formaction="/update/done/<%= i %>" >Update</button>
+        </form>
+        <button class="edit">Edit</button>   <!--放在form里面的button都会。。。。。post-->
         </li>
         <% } %>
+
         </ul>
 
         <button onclick=sortByDate()>Sort by date</button>

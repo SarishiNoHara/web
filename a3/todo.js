@@ -13,7 +13,7 @@ var createNewTaskElement = function(taskString, date, rate) {
     //Create List Item
     var listItem = document.createElement("li");
     //input (checkbox)
-    var checkBox = document.createElement("input"); // checkbox
+    var checkBox = document.createElement("button"); // checkbox
     //label
     var label = document.createElement("label");
     //input (text)
@@ -29,7 +29,7 @@ var createNewTaskElement = function(taskString, date, rate) {
 
     //Each element needs modifying
 
-    checkBox.type = "checkbox";
+    checkBox.innerText = "checkbox";
     editInput.type = "text";
     editInput.className = "task";
     editdateInput.type = "text";
@@ -136,6 +136,7 @@ var editTask = function() {
 
 
     var containsClass = listItem.classList.contains("editMode");
+
     //if the class of the parent is .editMode 
     if (containsClass) {
 
@@ -144,6 +145,7 @@ var editTask = function() {
         label.innerText = editInput.value;
         datelabel.innerText = editdateInput.value;
         ratelabel.innerText = editrateInput.value;
+
 
     } else {
         //Switch to .editMode
@@ -173,7 +175,7 @@ var deleteTask = function() {
 var taskCompleted = function() {
     console.log("Task complete...");
     //Append the task list item to the #completed-tasks
-    var listItem = this.parentNode;
+    var listItem = this.parentNode.parentNode;
     completedTasksHolder.appendChild(listItem);
     bindTaskEvents(listItem, taskIncomplete);
 }
@@ -183,7 +185,7 @@ var taskIncomplete = function() {
     console.log("Task Incomplete...");
     // When checkbox is unchecked
     // Append the task list item #incomplete-tasks
-    var listItem = this.parentNode;
+    var listItem = this.parentNode.parentNode;
     incompleteTasksHolder.appendChild(listItem);
     bindTaskEvents(listItem, taskCompleted);
 }
@@ -191,7 +193,7 @@ var taskIncomplete = function() {
 var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
     console.log("Bind list item events");
     //select taskListItem's children
-    var checkBox = taskListItem.querySelector("input[type=checkbox]");
+    var checkBox = taskListItem.querySelector("button.checkbox");
     var editButton = taskListItem.querySelector("button.edit");
     var deleteButton = taskListItem.querySelector("button.delete");
 
@@ -202,7 +204,7 @@ var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
     deleteButton.onclick = deleteTask;
 
     //bind checkBoxEventHandler to checkbox
-    checkBox.onchange = checkBoxEventHandler;
+    checkBox.onclick = checkBoxEventHandler;
 }
 
 var ajaxRequest = function() {
