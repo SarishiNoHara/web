@@ -1,18 +1,20 @@
 <!doctype html>
+
 <head>
     <meta charset=UTF-8>
     <title>todolist</title>
     <link rel="stylesheet" href="todo.css">
 </head>
+
 <body>
     <div class="container">
 
         <p>
-        <label for="new-task">Add Item</label><input id="new-task" type="text">
-        <label for="new-date">date</label><input id="new-date" type="text" class="date >
+            <label for="new-task">Add Item</label><input id="new-task" type="text">
+            <label for="new-date">date</label><input id="new-date" type="text" class="date">
+            <label for="new-rate">rate</label><input id="new-rate" type="text">
 
-        <label for="new-rate">rate</label><input id="new-rate" type="text">
-        <button>Add</button>
+            <button>Add</button>
         </p>
 
         <h3>Sort by Date Result</h3>
@@ -45,9 +47,10 @@
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
     <script src="todo.js"></script>
     <script>
-    $( function() {           
-    $( ".date" ).datepicker();
-    } );
+        $(function() {
+            $(".date").datepicker();
+        });
     </script>
 </body>
+
 </html>

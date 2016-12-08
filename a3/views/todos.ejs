@@ -1,0 +1,92 @@
+<!doctype html>
+<head>
+    <meta charset=UTF-8>
+    <title>todolist</title>
+    <link rel="stylesheet" href="/todo.css">
+</head>
+<body>
+    <div class="container">
+       
+        
+        <p>
+        <form method="post" action = "/todos"> 
+        <label for="new-task">Add Item</label><input id="new-task" type="text" name="message">
+        <label for="new-date">date</label><input id="new-date" type="text" class="date" name = "date">
+        <label for="new-rate">rate</label><input id="new-rate" type="text" name="rating">
+
+        <input type="submit" value="Add">
+       
+        </form> 
+        
+        <!--
+         <button type="submit" formmethod="post">Add</button>
+        <input type="submit" value="Add">
+         -->
+        
+       
+        </p>
+        
+
+        <h3>Sort by Date Result</h3>
+        <ul id="dateResults">
+        </ul>
+
+        <h3>Sort by Rating Result</h3>
+        <ul id="rateResults">
+        </ul>
+
+
+
+        <h3>Todo</h3>
+        <ul id="incomplete-tasks">
+        
+        <% for(var i of ejstodos) {%>
+        <li>
+        <input type="checkbox">
+        <label class="tasklabel"><%= i.message %></label>
+        <input type="text" class="task">
+        <label class="datelabel"><%= i.date %></label>
+        <input type="text" class="dateinput">
+        <label class="ratelabel"><%= i.rating %></label>
+        <input type="text" class="rateinput">
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+        </li>
+        <% } %>
+
+        </ul>
+
+        <h3>Completed</h3>
+        <ul id="completed-tasks">
+
+        <% for(var i of ejsdone) { %>
+        <li>
+        <input type="checkbox" checked>
+        <label class="tasklabel"><%= i.message%></label>
+        <input type="text" class="task">
+        <label class="datelabel"><%= i.date %></label>
+        <input type="text" class="dateinput">
+        <label class="ratelabel"><%= i.rating %></label>
+        <input type="text" class="rateinput">
+        <button class="edit">Edit</button>
+        <button class="delete">Delete</button>
+        </li>
+        <% } %>
+        </ul>
+
+        <button onclick=sortByDate()>Sort by date</button>
+
+        <button onclick=sortByRating()>Sort by rating</button>
+    </div>
+
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script src="/todo.js"></script>
+    <script>
+    $( function() {           
+    $( ".date" ).datepicker();
+    });
+    </script>
+</body>
+</html>
