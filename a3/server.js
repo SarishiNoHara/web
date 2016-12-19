@@ -3,7 +3,7 @@ controller = require('./controller');
 
 var app = express();
 
-app.set('view engine', 'ejs');
+//app.set('view engine', 'ejs');
 
 //handle static files(css, js)
 app.use(express.static('.'));

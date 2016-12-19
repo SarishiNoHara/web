@@ -98,24 +98,30 @@ p>button:hover {
 
 /* Task list */
 
-ul li {
+li {
     overflow: hidden;
     padding: 20px 0;
     border-bottom: 1px solid #eee;
 }
 
-ul li form>label {
+li>input[type="checkbox"] {
+    margin: 0 10px;
+    position: relative;
+    top: 15px;
+}
+
+li>label {
     font-size: 18px;
     line-height: 40px;
     width: 237px;
     padding: 0 0 0 11px;
 }
 
-ul li form>input[type="text"] {
+li>input[type="text"] {
     width: 226px;
 }
 
-form>.delete:hover {
+li>.delete:hover {
     color: #CF2323;
 }
 

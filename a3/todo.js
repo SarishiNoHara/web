@@ -1,19 +1,21 @@
 var taskInput = document.getElementById("new-task");
 var dateInput = document.getElementById("new-date");
 var rateInput = document.getElementById("new-rate");
-var addButton = document.getElementsByTagName("button")[0];
+var addButton = document.getElementById("addbutton");
 //var addButton = document.getElementById("input");
 var incompleteTasksHolder = document.getElementById("incomplete-tasks");
 var completedTasksHolder = document.getElementById("completed-tasks");
 var sortTasksByDateHolder = document.getElementById("dateResults");
 var sortTasksByRatingHolder = document.getElementById("rateResults");
+var newTaskId = 1;
 
-//New Task List Item
 var createNewTaskElement = function(taskString, date, rate) {
     //Create List Item
     var listItem = document.createElement("li");
     //input (checkbox)
     var checkBox = document.createElement("button"); // checkbox
+    //create id 
+    var number = document.createElement("label");
     //label
     var label = document.createElement("label");
     //input (text)
@@ -29,7 +31,11 @@ var createNewTaskElement = function(taskString, date, rate) {
 
     //Each element needs modifying
 
-    checkBox.innerText = "checkbox";
+    checkBox.innerText = newTaskId;
+    console.log(newTaskId, "newTaskId")
+    checkBox.className = "number";
+    newTaskId++;
+
     editInput.type = "text";
     editInput.className = "task";
     editdateInput.type = "text";
@@ -49,7 +55,6 @@ var createNewTaskElement = function(taskString, date, rate) {
     ratelabel.innerText = rate;
     ratelabel.className = "ratelabel";
 
-
     // each element needs appending
     listItem.appendChild(checkBox);
     listItem.appendChild(label);
@@ -60,7 +65,6 @@ var createNewTaskElement = function(taskString, date, rate) {
     listItem.appendChild(editrateInput);
     listItem.appendChild(editButton);
     listItem.appendChild(deleteButton);
-
     return listItem;
 }
 
@@ -106,13 +110,31 @@ var addTask = function() {
     console.log("Add task...");
     //Create a new list item with the text from #new-task:
     var listItem = createNewTaskElement(taskInput.value, dateInput.value, rateInput.value);
-    //Append listItem to incompleteTasksHolder
-    incompleteTasksHolder.appendChild(listItem);
-    bindTaskEvents(listItem, taskCompleted);
+
+    var item = {
+        message: taskInput.value,
+        date: dateInput.value,
+        rating: rateInput.value,
+        completed: 0,
+    };
 
     taskInput.value = "";
     dateInput.value = "";
     rateInput.value = "";
+
+    $.ajax({
+        type: 'POST',
+        url: 'todo',
+        data: item,
+        dataType: 'json',
+        complete: function() {
+            console.log('complete');
+            $(listItem).children('.number').text(newTaskId);
+            incompleteTasksHolder.appendChild(listItem);
+            bindTaskEvents(listItem, taskCompleted);
+        },
+    }).done(success).error(fail);
+
 }
 
 // Edit an existing task
@@ -142,10 +164,27 @@ var editTask = function() {
 
         //switch from .editMode 
         //Make label text become the input's value
-        label.innerText = editInput.value;
-        datelabel.innerText = editdateInput.value;
-        ratelabel.innerText = editrateInput.value;
+        var item = {
+            message: editInput.value,
+            date: editdateInput.value,
+            rating: editrateInput.value,
+            completed: 0,
+        };
 
+        var number = $(listItem).children(".number");
+        var id = Number(number.text());
+        $.ajax({
+            type: 'PUT',
+            url: '/todo/update/' + id,
+            data: item,
+            dataType: 'json',
+            complete: function() {
+                console.log('put method complete');
+                label.innerText = editInput.value;
+                datelabel.innerText = editdateInput.value;
+                ratelabel.innerText = editrateInput.value;
+            }
+        })
 
     } else {
         //Switch to .editMode
@@ -157,7 +196,6 @@ var editTask = function() {
 
     // Toggle .editMode on the parent
     listItem.classList.toggle("editMode");
-
 }
 
 
@@ -166,18 +204,39 @@ var deleteTask = function() {
     console.log("Delete task...");
     var listItem = this.parentNode;
     var ul = listItem.parentNode;
+    var label = $(listItem).children(".number");
+    var id = Number(label.text());
 
-    //Remove the parent list item from the ul
-    ul.removeChild(listItem);
+    $.ajax({
+            type: 'DELETE',
+            url: '/todo/delete/' + id,
+            success: function(res) {
+                console.log("delete method success");
+                ul.removeChild(listItem);
+                label.remove();
+            }
+
+        })
+        //Remove the parent list item from the ul
 }
 
 // Mark a task as complete 
 var taskCompleted = function() {
+    //function taskCompleted() {
     console.log("Task complete...");
     //Append the task list item to the #completed-tasks
-    var listItem = this.parentNode.parentNode;
-    completedTasksHolder.appendChild(listItem);
-    bindTaskEvents(listItem, taskIncomplete);
+    var listItem = this.parentNode;
+    var label = $(listItem).children(".number");
+    var id = Number(label.text());
+
+    $.ajax({
+        type: 'PUT',
+        url: '/todo/completed/' + id,
+        complete: function() {
+            completedTasksHolder.appendChild(listItem);
+            bindTaskEvents(listItem, taskIncomplete);
+        }
+    })
 }
 
 // Mark a task as incomplete
@@ -185,15 +244,26 @@ var taskIncomplete = function() {
     console.log("Task Incomplete...");
     // When checkbox is unchecked
     // Append the task list item #incomplete-tasks
-    var listItem = this.parentNode.parentNode;
-    incompleteTasksHolder.appendChild(listItem);
-    bindTaskEvents(listItem, taskCompleted);
+    var listItem = this.parentNode;
+    var label = $(listItem).children(".number");
+    var id = Number(label.text());
+    $.ajax({
+        type: 'PUT',
+        url: '/todo/incomplete/' + id,
+        complete: function() {
+            //  var listItem = this.parentNode;
+            incompleteTasksHolder.appendChild(listItem);
+            bindTaskEvents(listItem, taskCompleted);
+        }
+    })
+
 }
 
 var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
     console.log("Bind list item events");
     //select taskListItem's children
-    var checkBox = taskListItem.querySelector("button.checkbox");
+    var checkBox = taskListItem.querySelector("button.number");
+    // var checkBox = $(".number").eq(0);
     var editButton = taskListItem.querySelector("button.edit");
     var deleteButton = taskListItem.querySelector("button.delete");
 
@@ -202,7 +272,7 @@ var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
 
     //bind deleteTask to delete button
     deleteButton.onclick = deleteTask;
-
+    console.log(checkBox);
     //bind checkBoxEventHandler to checkbox
     checkBox.onclick = checkBoxEventHandler;
 }
@@ -228,3 +298,37 @@ for (var i = 0; i < completedTasksHolder.children.length; i++) {
     bindTaskEvents(completedTasksHolder.children[i], taskIncomplete);
 
 }
+
+var success = function(message) {
+    console.log(message, success);
+}
+
+var fail = function(error) {
+    console.log(error);
+}
+
+$.ajax({
+    type: 'GET',
+    url: 'todo',
+    success: function(todos) {
+        for (var key in todos) {
+            var listItem = createNewTaskElement(todos[key].message, todos[key].date, todos[key].rating);
+
+            var id = todos[key].id;
+            $(listItem).children('.number').text(id);
+            newTaskId = id;
+
+            if (todos[key].completed === 0) {
+                incompleteTasksHolder.appendChild(listItem);
+                bindTaskEvents(listItem, taskCompleted);
+            } else {
+                completedTasksHolder.appendChild(listItem);
+                bindTaskEvents(listItem, taskIncomplete);
+            }
+        }
+        // var string = $('.number').text();
+        // var array = string.split('').map(Number);
+        // largest = Math.max.apply(Math, array);
+        // console.log(array, largest);
+    }
+})

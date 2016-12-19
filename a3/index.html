@@ -3,19 +3,19 @@
 <head>
     <meta charset=UTF-8>
     <title>todolist</title>
-    <link rel="stylesheet" href="todo.css">
+    <link rel="stylesheet" href="/todo.css">
+
 </head>
 
 <body>
     <div class="container">
-
         <p>
-            <label for="new-task">Add Item</label><input id="new-task" type="text">
-            <label for="new-date">date</label><input id="new-date" type="text" class="date">
-            <label for="new-rate">rate</label><input id="new-rate" type="text">
-
-            <button>Add</button>
+            <label for="new-task">Add Item</label><input id="new-task" type="text" name="message">
+            <label for="new-date">date</label><input id="new-date" type="text" class="date" name="date">
+            <label for="new-rate">rate</label><input id="new-rate" type="text" name="rating">
+            <button id="addbutton" type="submit">add</button>
         </p>
+
 
         <h3>Sort by Date Result</h3>
         <ul id="dateResults">
@@ -26,15 +26,12 @@
         </ul>
 
 
-
         <h3>Todo</h3>
         <ul id="incomplete-tasks">
-
         </ul>
 
         <h3>Completed</h3>
         <ul id="completed-tasks">
-
         </ul>
 
         <button onclick=sortByDate()>Sort by date</button>
@@ -45,12 +42,12 @@
     <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
-    <script src="todo.js"></script>
     <script>
         $(function() {
             $(".date").datepicker();
         });
     </script>
+    <script src="/todo.js"></script>
 </body>
 
 </html>
