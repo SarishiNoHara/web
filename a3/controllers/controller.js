@@ -9,8 +9,16 @@ var currentId = 3;
 
 var bodyParser = require("body-parser");
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
-
+var path = require('path');
 module.exports = function(app) {
+
+    app.get('/', function(req, res) {
+        res.sendFile(path.join(__dirname, '../views/splash.html'));
+    });
+
+    app.get('/index', function(req, res) {
+        res.sendFile(path.join(__dirname, '../views/index.html'));
+    })
 
     app.get('/todo', function(req, res) {
         res.json(todos);

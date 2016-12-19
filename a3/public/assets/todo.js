@@ -32,7 +32,6 @@ var createNewTaskElement = function(taskString, date, rate) {
     //Each element needs modifying
 
     checkBox.innerText = newTaskId;
-    console.log(newTaskId, "newTaskId")
     checkBox.className = "number";
     newTaskId++;
 
@@ -129,6 +128,8 @@ var addTask = function() {
         dataType: 'json',
         complete: function() {
             console.log('complete');
+            priority(item.rating, listItem);
+            overdue(item.date, listItem);
             $(listItem).children('.number').text(newTaskId);
             incompleteTasksHolder.appendChild(listItem);
             bindTaskEvents(listItem, taskCompleted);
@@ -143,7 +144,7 @@ var editTask = function() {
 
     var listItem = this.parentNode;
 
-    var editInput = listItem.querySelector(".task")
+    var editInput = listItem.querySelector(".task");
     var label = listItem.querySelector(".tasklabel");
 
     var editdateInput = listItem.querySelector(".dateinput")
@@ -180,6 +181,8 @@ var editTask = function() {
             dataType: 'json',
             complete: function() {
                 console.log('put method complete');
+                priority(item.rating, listItem);
+                overdue(item.date, listItem);
                 label.innerText = editInput.value;
                 datelabel.innerText = editdateInput.value;
                 ratelabel.innerText = editrateInput.value;
@@ -233,6 +236,7 @@ var taskCompleted = function() {
         type: 'PUT',
         url: '/todo/completed/' + id,
         complete: function() {
+            $(listItem).children('.ratelabel').css('text-decoration', 'line-through').css('color', 'grey');
             completedTasksHolder.appendChild(listItem);
             bindTaskEvents(listItem, taskIncomplete);
         }
@@ -252,6 +256,7 @@ var taskIncomplete = function() {
         url: '/todo/incomplete/' + id,
         complete: function() {
             //  var listItem = this.parentNode;
+            $(listItem).children('.ratelabel').css('text-decoration', 'none').css('color', 'red');
             incompleteTasksHolder.appendChild(listItem);
             bindTaskEvents(listItem, taskCompleted);
         }
@@ -272,7 +277,7 @@ var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
 
     //bind deleteTask to delete button
     deleteButton.onclick = deleteTask;
-    console.log(checkBox);
+
     //bind checkBoxEventHandler to checkbox
     checkBox.onclick = checkBoxEventHandler;
 }
@@ -307,6 +312,24 @@ var fail = function(error) {
     console.log(error);
 }
 
+function overdue(date, listItem) {
+    var d = new Date(date);
+    var today = new Date();
+    if (d < today) {
+        var item = $(listItem).children('.datelabel');
+        item.css('text-decoration', 'line-through').css('color', 'grey');
+    }
+}
+
+function priority(rating, listItem) {
+    console.log(rating);
+    if (rating > 3) {
+        var item = $(listItem).children('.ratelabel');
+        console.log('rating', item);
+        item.css('color', 'red');
+    }
+}
+
 $.ajax({
     type: 'GET',
     url: 'todo',
@@ -317,7 +340,8 @@ $.ajax({
             var id = todos[key].id;
             $(listItem).children('.number').text(id);
             newTaskId = id;
-
+            priority(todos[key].rating, listItem);
+            overdue(todos[key].date, listItem);
             if (todos[key].completed === 0) {
                 incompleteTasksHolder.appendChild(listItem);
                 bindTaskEvents(listItem, taskCompleted);
@@ -326,6 +350,7 @@ $.ajax({
                 bindTaskEvents(listItem, taskIncomplete);
             }
         }
+
         // var string = $('.number').text();
         // var array = string.split('').map(Number);
         // largest = Math.max.apply(Math, array);
