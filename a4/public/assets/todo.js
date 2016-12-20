@@ -6,19 +6,17 @@ var incompleteTasksHolder = document.getElementById("incomplete-tasks");
 var completedTasksHolder = document.getElementById("completed-tasks");
 var sortTasksByDateHolder = document.getElementById("dateResults");
 var sortTasksByRatingHolder = document.getElementById("rateResults");
-var newTaskId = 1;
+var newTaskId = 0;
 
 var createNewTaskElement = function(taskString, date, rate) {
     //Create List Item
     var listItem = document.createElement("li");
-    //input (checkbox)
-    var checkBox = document.createElement("button"); // checkbox
-    //create id 
-    var number = document.createElement("label");
+    //button 
+    var checkBox = document.createElement("button");
     //label
     var label = document.createElement("label");
     //input (text)
-    var editInput = document.createElement("input"); // text
+    var editInput = document.createElement("input");
     //button.edit
     var datelabel = document.createElement("label");
     var editdateInput = document.createElement("input");
@@ -29,7 +27,6 @@ var createNewTaskElement = function(taskString, date, rate) {
     var deleteButton = document.createElement("button");
 
     //Each element needs modifying
-
     checkBox.innerText = newTaskId;
     checkBox.className = "number";
     newTaskId++;
@@ -113,7 +110,6 @@ var addTask = function() {
         message: taskInput.value,
         date: dateInput.value,
         rating: rateInput.value,
-        completed: 0,
     };
 
     taskInput.value = "";
@@ -139,67 +135,70 @@ var addTask = function() {
 
 // Edit an existing task
 var editTask = function() {
-    console.log("Edit Task...");
+        console.log("Edit Task...");
 
-    var listItem = this.parentNode;
+        var listItem = this.parentNode;
 
-    var editInput = listItem.querySelector(".task");
-    var label = listItem.querySelector(".tasklabel");
+        var editInput = listItem.querySelector(".task");
+        var label = listItem.querySelector(".tasklabel");
 
-    var editdateInput = listItem.querySelector(".dateinput")
-    var datelabel = listItem.querySelector(".datelabel");
+        var editdateInput = listItem.querySelector(".dateinput")
+        var datelabel = listItem.querySelector(".datelabel");
 
-    var editrateInput = listItem.querySelector(".rateinput")
-    var ratelabel = listItem.querySelector(".ratelabel");
+        var editrateInput = listItem.querySelector(".rateinput")
+        var ratelabel = listItem.querySelector(".ratelabel");
 
-    $(function() {
-        $(".dateinput").datepicker();
-    });
+        $(function() {
+            $(".dateinput").datepicker();
+        });
 
 
-    var containsClass = listItem.classList.contains("editMode");
+        var containsClass = listItem.classList.contains("editMode");
 
-    //if the class of the parent is .editMode 
-    if (containsClass) {
+        //if the class of the parent is .editMode 
+        if (containsClass) {
 
-        //switch from .editMode 
-        //Make label text become the input's value
-        var item = {
-            message: editInput.value,
-            date: editdateInput.value,
-            rating: editrateInput.value,
-            completed: 0,
-        };
+            //switch from .editMode 
+            //Make label text become the input's value
+            var item = {
+                message: editInput.value,
+                date: editdateInput.value,
+                rating: editrateInput.value,
+                //          completed: 0,
+            };
 
-        var number = $(listItem).children(".number");
-        var id = Number(number.text());
-        $.ajax({
-            type: 'PUT',
-            url: '/todo/update/' + id,
-            data: item,
-            dataType: 'json',
-            complete: function() {
-                console.log('put method complete');
-                priority(item.rating, listItem);
-                overdue(item.date, listItem);
-                label.innerText = editInput.value;
-                datelabel.innerText = editdateInput.value;
-                ratelabel.innerText = editrateInput.value;
-            }
-        })
+            var number = $(listItem).children(".number");
+            var id = Number(number.text());
+            $.ajax({
+                type: 'PUT',
+                url: '/todo/update/' + id,
+                data: item,
+                dataType: 'json',
+                complete: function() {
+                    console.log('put method complete');
+                    var flag = $(listItem).parent('ul').attr('id');
+                    if (flag === 'incomplete-tasks') {
+                        priority(item.rating, listItem);
+                    }
+                    overdue(item.date, listItem);
+                    label.innerText = editInput.value;
+                    datelabel.innerText = editdateInput.value;
+                    ratelabel.innerText = editrateInput.value;
+                }
+            })
 
-    } else {
-        //Switch to .editMode
-        //input value becomes the label's text
-        editInput.value = label.innerText;
-        editdateInput.value = datelabel.innerText;
-        editrateInput.value = ratelabel.innerText;
+        } else {
+            //Switch to .editMode
+            //input value becomes the label's text
+            editInput.value = label.innerText;
+            editdateInput.value = datelabel.innerText;
+            editrateInput.value = ratelabel.innerText;
+        }
+
+        // Toggle .editMode on the parent
+        listItem.classList.toggle("editMode");
     }
-
-    // Toggle .editMode on the parent
-    listItem.classList.toggle("editMode");
-}
-
+    //var getId = function(0 {})
 
 // Delete an existing task
 var deleteTask = function() {
@@ -235,7 +234,7 @@ var taskCompleted = function() {
         type: 'PUT',
         url: '/todo/completed/' + id,
         complete: function() {
-            $(listItem).children('.ratelabel').css('text-decoration', 'line-through').css('color', 'grey');
+            $(listItem).children('.ratelabel').css('color', 'grey');
             completedTasksHolder.appendChild(listItem);
             bindTaskEvents(listItem, taskIncomplete);
         }
@@ -254,8 +253,8 @@ var taskIncomplete = function() {
         type: 'PUT',
         url: '/todo/incomplete/' + id,
         complete: function() {
-            //  var listItem = this.parentNode;
-            $(listItem).children('.ratelabel').css('text-decoration', 'none').css('color', 'red');
+            var text = $(listItem).children('.ratelabel').text();
+            priority(text, listItem);
             incompleteTasksHolder.appendChild(listItem);
             bindTaskEvents(listItem, taskCompleted);
         }
@@ -281,15 +280,9 @@ var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
     checkBox.onclick = checkBoxEventHandler;
 }
 
-var ajaxRequest = function() {
-    console.log("AJAX Request");
-}
-
 // Set the click handler to the addTask function
 //addButton.onclick = addTask;
 addButton.addEventListener("click", addTask);
-addButton.addEventListener("click", ajaxRequest);
-
 
 // Cycle over the incompleteTaskHolder ul list items
 for (var i = 0; i < incompleteTasksHolder.children.length; i++) {
@@ -314,20 +307,24 @@ var fail = function(error) {
 var overdue = function(date, listItem) {
     var d = new Date(date);
     var today = new Date();
+    var item = $(listItem).children('.datelabel');
     if (d < today) {
-        var item = $(listItem).children('.datelabel');
         item.css('text-decoration', 'line-through').css('color', 'grey');
+    } else {
+        item.css('text-decoration', 'none').css('color', 'gery');
     }
 }
 
 var priority = function(rating, listItem) {
-    console.log(rating);
+    var item = $(listItem).children('.ratelabel');
+
     if (rating > 3) {
-        var item = $(listItem).children('.ratelabel');
-        console.log('rating', item);
         item.css('color', 'red');
+    } else {
+        item.css('color', 'grey');
     }
 }
+
 
 $.ajax({
     type: 'GET',
@@ -339,9 +336,10 @@ $.ajax({
             var id = todos[key].id;
             $(listItem).children('.number').text(id);
             newTaskId = id;
-            priority(todos[key].rating, listItem);
+
             overdue(todos[key].date, listItem);
-            if (todos[key].completed === 0) {
+            if (todos[key].completed.data[0] === 0) {
+                priority(todos[key].rating, listItem);
                 incompleteTasksHolder.appendChild(listItem);
                 bindTaskEvents(listItem, taskCompleted);
             } else {
@@ -349,10 +347,5 @@ $.ajax({
                 bindTaskEvents(listItem, taskIncomplete);
             }
         }
-
-        // var string = $('.number').text();
-        // var array = string.split('').map(Number);
-        // largest = Math.max.apply(Math, array);
-        // console.log(array, largest);
     }
 })
