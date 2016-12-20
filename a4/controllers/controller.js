@@ -20,6 +20,10 @@ module.exports = function(app) {
         res.sendFile(path.join(__dirname, '../views/index.html'));
     })
 
+    //     app.get('/analyse', fucntion(req, res) {
+    // res.sendFile(path.join(__dirname, '../views/index.html'));
+    //     })
+
     app.get('/todo', function(req, res) {
         connection.query('select * from todolist', function(err, result) {
             var todos = JSON.parse(JSON.stringify(result));
