@@ -1,11 +1,11 @@
-var taskInput = $("#new-task");
-var dateInput = $("#new-date");
-var rateInput = $("#new-rate");
-var addButton = $("#addbutton");
-var incompleteTasksHolder = $("#incomplete-tasks");
-var completedTasksHolder = $("#completed-tasks");
-var sortTasksByDateHolder = $("#dateResults");
-var sortTasksByRatingHolder = $("#rateResults");
+var taskInput = $("#new-task"),
+    dateInput = $("#new-date"),
+    rateInput = $("#new-rate"),
+    addButton = $("#addbutton"),
+    incompleteTasksHolder = $("#incomplete-tasks"),
+    completedTasksHolder = $("#completed-tasks"),
+    sortTasksByDateHolder = $("#dateResults"),
+    sortTasksByRatingHolder = $("#rateResults");
 var newTaskId = 0;
 
 var createNewTaskElement = function(taskString, date, rate) {
@@ -140,17 +140,15 @@ var editTask = function() {
     console.log("Edit Task...");
 
     var listItem = $(this.parentNode);
-    console.log("listitem", listItem);
 
-    var editInput = listItem.children(".task");
-    var label = listItem.children(".tasklabel");
-    console.log(label.text());
+    var editInput = listItem.children(".task"),
+        label = listItem.children(".tasklabel"),
 
-    var editdateInput = listItem.children(".dateinput");
-    var datelabel = listItem.children(".datelabel");
+        editdateInput = listItem.children(".dateinput"),
+        datelabel = listItem.children(".datelabel"),
 
-    var editrateInput = listItem.children(".rateinput");
-    var ratelabel = listItem.children(".ratelabel");
+        editrateInput = listItem.children(".rateinput"),
+        ratelabel = listItem.children(".ratelabel");
 
     $(function() {
         $(".dateinput").datepicker();
@@ -203,7 +201,6 @@ var editTask = function() {
 var deleteTask = function() {
     console.log("Delete task...");
     var listItem = $(this.parentNode);
-    console.log(listItem);
 
     var id = getId(listItem);
     $.ajax({
@@ -223,8 +220,6 @@ var taskCompleted = function() {
     var listItem = $(this.parentNode);
 
     var id = getId(listItem);
-    console.log("id", id);
-
     $.ajax({
         type: 'PUT',
         url: '/todo/completed/' + id,
@@ -259,9 +254,9 @@ var taskIncomplete = function() {
 var bindTaskEvents = function(taskListItem, checkBoxEventHandler) {
     console.log("Bind list item events");
     //select taskListItem's children
-    var checkBox = taskListItem.get(0).querySelector("button.number");
-    var editButton = taskListItem.get(0).querySelector("button.edit");
-    var deleteButton = taskListItem.get(0).querySelector("button.delete");
+    var checkBox = taskListItem.get(0).querySelector("button.number"),
+        editButton = taskListItem.get(0).querySelector("button.edit"),
+        deleteButton = taskListItem.get(0).querySelector("button.delete");
 
     //bind editTask to edit button
     editButton.onclick = editTask;
