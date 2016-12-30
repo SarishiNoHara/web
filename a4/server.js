@@ -1,5 +1,6 @@
-var express = require('express');
-controller = require('./controllers/controller');
+var express = require('express'),
+    controller = require('./controllers/controller');
+
 
 var app = express();
 
@@ -9,7 +10,9 @@ var app = express();
 app.use(express.static('./public/assets'));
 
 //fire app
-controller(app);
+controller.route(app);
+controller.database(app);
+controller.configuration(app);
 
 //set listening port
 app.listen(3000);

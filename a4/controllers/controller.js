@@ -1,8 +1,8 @@
+var mysql = require('mysql');
 var bodyParser = require("body-parser");
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
-var path = require('path');
-var mysql = require('mysql');
-
+var path = require('path');;
+var cookies = require('cookie-parser');
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -10,7 +10,23 @@ var connection = mysql.createConnection({
     database: 'todo',
 })
 
-module.exports = function(app) {
+function route(app) {
+
+    app.get("/sendMeCookies", function(req, res) {
+        console.log("Handing out cookies");
+        res.cookie("chocolate", "kruemel");
+        res.cookie("signed_chocolate", "monster", { signed: true });
+        res.send();
+    });
+
+    app.get("/listAllCookies", function(req, res) {
+        console.log("++ unsigned ++");
+        console.log(req.cookies);
+        console.log("++ signed ++");
+        console.log(req.signedCookies);
+        res.clearCookie("chocolate");
+        res.send();
+    });
 
     app.get('/', function(req, res) {
         res.sendFile(path.join(__dirname, '../views/splash.html'));
@@ -24,6 +40,70 @@ module.exports = function(app) {
         res.sendFile(path.join(__dirname, '../views/analyse.html'));
     })
 
+}
+
+function database(app) {
+    app.get('/todo', function(req, res) {
+        connection.query('select * from todos', function(err, result) {
+            var todos = JSON.parse(JSON.stringify(result));
+            res.json(todos);
+        })
+    });
+
+    app.post('/todo', urlencodedParser, function(req, res) {
+        var item = {
+            message: req.body.message,
+            date: req.body.date,
+            rating: req.body.rating,
+            completed: false,
+        };
+
+        var query = connection.query('insert into todos set ?', item, function(err, result) {})
+        res.send("add success");
+    })
+
+
+    app.delete('/todo/delete/:id', urlencodedParser, function(req, res) {
+        var id = req.params.id;
+
+        connection.query('delete from todos where id=?', id, function(err, result) {})
+
+        res.send("delete todo");
+    });
+
+    app.put('/todo/update/:id', urlencodedParser, function(req, res) {
+        var id = req.params.id,
+            message = req.body.message,
+            date = req.body.date,
+            rating = req.body.rating;
+
+        connection.query('update todos set message=?, date=?, rating=? where id=?', [message, date, rating, id],
+            function(err, result) {})
+
+        res.send('update todo');
+    });
+
+    app.put('/todo/completed/:id', urlencodedParser, function(req, res) {
+        var id = req.params.id;
+
+        connection.query('update todos set completed=true where id=?', id, function(err, result) {
+
+        });
+
+        res.send('completed!');
+    });
+
+    app.put('/todo/incomplete/:id', urlencodedParser, function(req, res) {
+        var id = req.params.id;
+
+        var query = connection.query('update todos set completed=false where id=?', id, function(err, result) {
+
+        });
+        res.send('incomplete!');
+    });
+}
+
+function configuration(app) {
     app.get('/q1', function(req, res) {
         // select User.name, ToDoList.Id , ToDoList.Name as todolist 
         // from User, ToDoList  
@@ -137,71 +217,10 @@ module.exports = function(app) {
             })
     })
 
+}
 
-    app.get('/todo', function(req, res) {
-        connection.query('select * from todos', function(err, result) {
-            var todos = JSON.parse(JSON.stringify(result));
-            res.json(todos);
-        })
-    });
-
-    app.post('/todo', urlencodedParser, function(req, res) {
-        var item = {
-            message: req.body.message,
-            date: req.body.date,
-            rating: req.body.rating,
-            completed: false,
-        };
-
-        var query = connection.query('insert into todos set ?', item, function(err, result) {
-            console.log(query);
-        })
-
-        res.sendStatus(200);
-    })
-
-
-    app.delete('/todo/delete/:id', urlencodedParser, function(req, res) {
-        var id = req.params.id;
-
-        var query = connection.query('delete from todos where id=?', id, function(err, result) {
-            console.log(query);
-        })
-
-        res.send("delete todo");
-    });
-
-    app.put('/todo/update/:id', urlencodedParser, function(req, res) {
-        var id = req.params.id,
-            message = req.body.message,
-            date = req.body.date,
-            rating = req.body.rating;
-
-        var query = connection.query('update todos set message=?, date=?, rating=? where id=?', [message, date, rating, id],
-            function(err, result) {
-                console.log(query);
-            })
-
-        res.send('update todo');
-    });
-
-    app.put('/todo/completed/:id', urlencodedParser, function(req, res) {
-        var id = req.params.id;
-
-        var query = connection.query('update todos set completed=true where id=?', id, function(err, result) {
-
-        });
-
-        res.send('completed!');
-    });
-
-    app.put('/todo/incomplete/:id', urlencodedParser, function(req, res) {
-        var id = req.params.id;
-
-        var query = connection.query('update todos set completed=false where id=?', id, function(err, result) {
-
-        });
-        res.send('incomplete!');
-    });
-
+module.exports = {
+    route: route,
+    database: database,
+    configuration: configuration
 }

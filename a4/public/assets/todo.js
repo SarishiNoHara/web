@@ -120,19 +120,23 @@ var addTask = function() {
     rateInput.val("");
 
     $.ajax({
-        type: 'POST',
-        url: 'todo',
-        data: item,
-        dataType: 'json',
-        complete: function() {
-            console.log('complete');
-            priority(item.rating, listItem);
-            overdue(item.date, listItem);
-            listItem.children('.number').text(newTaskId);
-            incompleteTasksHolder.append(listItem);
-            bindTaskEvents(listItem, taskCompleted);
-        },
-    });
+            type: 'POST',
+            url: '/todo',
+            data: item,
+            success: function() {
+                console.log('complete');
+                priority(item.rating, listItem);
+                overdue(item.date, listItem);
+                listItem.children('.number').text(newTaskId);
+                incompleteTasksHolder.append(listItem);
+                bindTaskEvents(listItem, taskCompleted);
+            },
+        }).done(function(message, success) {
+            console.log("success");
+        })
+        .fail(function(error) {
+            console.log(error);
+        });
 }
 
 // Edit an existing task
@@ -170,8 +174,7 @@ var editTask = function() {
             type: 'PUT',
             url: '/todo/update/' + id,
             data: item,
-            dataType: 'json',
-            complete: function() {
+            success: function() {
                 console.log('put method complete');
 
                 var flag = listItem.parent('ul').attr('id');
@@ -223,7 +226,7 @@ var taskCompleted = function() {
     $.ajax({
         type: 'PUT',
         url: '/todo/completed/' + id,
-        complete: function() {
+        success: function() {
             listItem.children('.ratelabel').css('color', 'grey');
             completedTasksHolder.append(listItem);
             bindTaskEvents(listItem, taskIncomplete);
@@ -241,7 +244,7 @@ var taskIncomplete = function() {
     $.ajax({
         type: 'PUT',
         url: '/todo/incomplete/' + id,
-        complete: function() {
+        success: function() {
             var text = listItem.children('.ratelabel').text();
             priority(text, listItem);
             incompleteTasksHolder.append(listItem);
@@ -306,7 +309,7 @@ var priority = function(rating, listItem) {
 
 $.ajax({
     type: 'GET',
-    url: 'todo',
+    url: '/todo', //不加／的话就是相对
     success: function(todos) {
         for (var key in todos) {
             var listItem = createNewTaskElement(todos[key].message, todos[key].date, todos[key].rating);
