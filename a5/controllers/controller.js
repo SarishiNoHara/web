@@ -35,7 +35,11 @@ function route(app) {
     });
 
     app.get('/index', function(req, res) {
-        res.sendFile(path.join(__dirname, '../views/index.html'));
+        connection.query('select * from todos', function(err, result) {
+            var todos = JSON.parse(JSON.stringify(result));
+            if (err) throw err;
+            res.render('index', { "title": "text", ejstodo: todos });
+        })
     })
 
     app.get('/analyse', function(req, res) {
