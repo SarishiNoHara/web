@@ -11,6 +11,7 @@ $.getJSON("/todo", function(todos) {
     for (var key in todos) {
         newTaskId = todos[key].id;
     }
+    console.log(newTaskId);
 })
 
 var overdue = function(date, listItem) {
@@ -145,23 +146,22 @@ var addTask = function() {
     rateInput.val("");
 
     $.ajax({
-            type: 'POST',
-            url: '/todo',
-            data: item,
-            success: function() {
-                console.log('complete');
-                priority(item.rating, listItem);
-                overdue(item.date, listItem);
-                listItem.children('.number').text(newTaskId);
-                incompleteTasksHolder.append(listItem);
-                bindTaskEvents(listItem, taskCompleted);
-            },
-        }).done(function(message, success) {
-            console.log("success");
-        })
-        .fail(function(error) {
-            console.log(error);
-        });
+        type: 'POST',
+        url: '/todo',
+        data: item,
+        success: function() {
+            console.log('complete');
+            priority(item.rating, listItem);
+            overdue(item.date, listItem);
+            listItem.children('.number').text(newTaskId);
+            incompleteTasksHolder.append(listItem);
+            bindTaskEvents(listItem, taskCompleted);
+        },
+    }).done(function(message, success) {
+        console.log("success");
+    }).fail(function(error) {
+        console.log(error);
+    });
 }
 
 // Edit an existing task

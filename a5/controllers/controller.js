@@ -4,6 +4,8 @@ var urlencodedParser = bodyParser.urlencoded({ extended: true });
 var path = require('path');
 var cookies = require('cookie-parser');
 var credentials = require("../credentials");
+var passport = require("passport");
+var Strategy = require("passport-twitter").Strategy;
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -12,6 +14,44 @@ var connection = mysql.createConnection({
 })
 
 function route(app) {
+
+    app.use(require('morgan')('combined'));
+    app.use(require('cookie-parser')());
+    app.use(require('body-parser').urlencoded({ extended: true }));
+    app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
+
+    app.use(passport.initialize());
+    app.use(passport.session());
+
+    var env = require('../env');
+
+    passport.use(new Strategy({
+            consumerKey: env.twitter.consumerKey,
+            consumerSecret: env.twitter.consumerSecret,
+            callbackUrl: env.twitter.callbackURL
+        },
+        function(token, tokenSecret, profile, cb) {
+            return cb(null, profile);
+        }
+    ));
+
+    passport.serializeUser(function(user, cb) {
+        cb(null, user);
+    });
+
+    passport.deserializeUser(function(obj, cb) {
+        cb(null, obj);
+    });
+
+    app.get('/auth/twitter',
+        passport.authenticate('twitter'));
+
+    app.get('/auth/twitter/return',
+        passport.authenticate('twitter', { failureRedirect: '/' }),
+        function(req, res) {
+            // Successful authentication, redirect home.
+            res.redirect('/index');
+        });
     app.use(cookies(credentials.cookieSecret));
 
     app.get("/sendMeCookies", function(req, res) {
@@ -35,10 +75,10 @@ function route(app) {
     });
 
     app.get('/index', function(req, res) {
-        connection.query('select * from todos', function(err, result) {
+        connection.query('select * from todos where userId=?', req.user.id, function(err, result) {
             var todos = JSON.parse(JSON.stringify(result));
             if (err) throw err;
-            res.render('index', { "title": "text", ejstodo: todos });
+            res.render('index', { ejstodo: todos, user: req.user.username });
         })
     })
 
@@ -49,12 +89,13 @@ function route(app) {
 }
 
 function database(app) {
-    app.get('/todo', function(req, res) {
+
+    app.get('/todo', urlencodedParser, function(req, res) {
         connection.query('select * from todos', function(err, result) {
             var todos = JSON.parse(JSON.stringify(result));
             res.json(todos);
         })
-    });
+    })
 
     app.post('/todo', urlencodedParser, function(req, res) {
         var item = {
@@ -62,6 +103,8 @@ function database(app) {
             date: req.body.date,
             rating: req.body.rating,
             completed: false,
+            userId: req.user.id,
+            userName: req.user.username
         };
 
         var query = connection.query('insert into todos set ?', item, function(err, result) {})
