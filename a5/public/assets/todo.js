@@ -5,14 +5,78 @@ var taskInput = $("#new-task"),
     incompleteTasksHolder = $("#incomplete-tasks"),
     completedTasksHolder = $("#completed-tasks"),
     sortTasksByDateHolder = $("#dateResults"),
-    sortTasksByRatingHolder = $("#rateResults");
+    sortTasksByRatingHolder = $("#rateResults"),
+    zoomInButton = $("#zoomin"),
+    zoomOutButton = $("#zoomout");
+
 var newTaskId = 0;
 $.getJSON("/todo", function(todos) {
     for (var key in todos) {
         newTaskId = todos[key].id;
     }
-    console.log(newTaskId);
 })
+
+//zoomin and zoomout
+var changeSize = function() {
+    if (getCookie('size') === "") {
+        var size = 1.0;
+    } else {
+        var size = getCookie('size');
+    }
+    return Number(size);
+}
+
+var size = changeSize();
+
+var zoomout = function() {
+    size = size - 0.1;
+    set(size);
+}
+
+var zoomin = function() {
+    size = size + 0.1;
+    set(size);
+}
+
+function set(size) {
+    document.body.style.zoom = size;
+    document.body.style.cssText += '; -moz-transform: scale(' + size + ');-moz-transform-origin: 0 0; ';
+    setCookie('size', size, 10);
+}
+
+zoomInButton.click(zoomin);
+zoomOutButton.click(zoomout);
+
+//change size when user reload page
+function setPageSize() {
+    var cookieFontSize = getCookie('size');
+    // set(cookieFontSize);
+    document.body.style.zoom = cookieFontSize;
+}
+
+//get cookie value
+function getCookie(c_name) {
+    if (document.cookie.length > 0) {
+        c_start = document.cookie.indexOf(c_name + "=")
+        if (c_start != -1) {
+            c_start = c_start + c_name.length + 1
+            c_end = document.cookie.indexOf(";", c_start)
+            if (c_end == -1) c_end = document.cookie.length
+            return unescape(document.cookie.substring(c_start, c_end))
+        }
+    }
+    return ""
+}
+
+//set cookie value
+function setCookie(c_name, value, expiredays) {
+    var exdate = new Date()
+    exdate.setDate(exdate.getDate() + expiredays)
+    document.cookie = c_name + "=" + escape(value) +
+        ((expiredays == null) ? "" : ";expires=" + exdate.toGMTString())
+}
+
+setPageSize();
 
 var overdue = function(date, listItem) {
     var d = new Date(date);

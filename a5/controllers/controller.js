@@ -52,23 +52,6 @@ function route(app) {
             // Successful authentication, redirect home.
             res.redirect('/index');
         });
-    app.use(cookies(credentials.cookieSecret));
-
-    app.get("/sendMeCookies", function(req, res) {
-        console.log("Handing out cookies");
-        res.cookie("chocolate", "kruemel");
-        res.cookie("signed_chocolate", "monster", { signed: true });
-        res.send();
-    });
-
-    app.get("/listAllCookies", function(req, res) {
-        console.log("++ unsigned ++");
-        console.log(req.cookies);
-        console.log("++ signed ++");
-        console.log(req.signedCookies);
-        res.clearCookie("chocolate");
-        res.send();
-    });
 
     app.get('/', function(req, res) {
         res.sendFile(path.join(__dirname, '../views/splash.html'));

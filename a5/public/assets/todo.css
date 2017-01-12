@@ -20,6 +20,12 @@ body {
     margin: 50px auto 0;
 }
 
+.zoom {
+    float: right;
+    position: relative;
+    right: 200px;
+}
+
 ul {
     margin: 0;
     padding: 0;
