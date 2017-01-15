@@ -1,5 +1,7 @@
 var express = require('express'),
-    controller = require('./controllers/controller');
+    routeController = require('./controllers/routeController'),
+    analyseController = require('./controllers/analyseController'),
+    dbController = require('./controllers/dbController');
 
 var app = express();
 
@@ -9,9 +11,9 @@ app.set('view engine', 'ejs');
 app.use(express.static('./public/assets'));
 
 //fire app
-controller.route(app);
-controller.database(app);
-controller.configuration(app);
+routeController.route(app);
+dbController.database(app);
+analyseController.configuration(app);
 
 //set listening port
 app.listen(3000);

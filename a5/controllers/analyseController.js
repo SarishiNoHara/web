@@ -2,138 +2,12 @@ var mysql = require('mysql');
 var bodyParser = require("body-parser");
 var urlencodedParser = bodyParser.urlencoded({ extended: true });
 var path = require('path');
-var cookies = require('cookie-parser');
-var credentials = require("../credentials");
-var passport = require("passport");
-var Strategy = require("passport-twitter").Strategy;
 var connection = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '123',
     database: 'todo',
 })
-
-function route(app) {
-
-    app.use(require('morgan')('combined'));
-    app.use(require('cookie-parser')());
-    app.use(require('body-parser').urlencoded({ extended: true }));
-    app.use(require('express-session')({ secret: 'keyboard cat', resave: true, saveUninitialized: true }));
-
-    app.use(passport.initialize());
-    app.use(passport.session());
-
-    var env = require('../env');
-
-    passport.use(new Strategy({
-            consumerKey: env.twitter.consumerKey,
-            consumerSecret: env.twitter.consumerSecret,
-            callbackUrl: env.twitter.callbackURL
-        },
-        function(token, tokenSecret, profile, cb) {
-            return cb(null, profile);
-        }
-    ));
-
-    passport.serializeUser(function(user, cb) {
-        cb(null, user);
-    });
-
-    passport.deserializeUser(function(obj, cb) {
-        cb(null, obj);
-    });
-
-    app.get('/auth/twitter',
-        passport.authenticate('twitter'));
-
-    app.get('/auth/twitter/return',
-        passport.authenticate('twitter', { failureRedirect: '/' }),
-        function(req, res) {
-            // Successful authentication, redirect home.
-            res.redirect('/index');
-        });
-
-    app.get('/', function(req, res) {
-        res.sendFile(path.join(__dirname, '../views/splash.html'));
-    });
-
-    app.get('/index', function(req, res) {
-        connection.query('select * from todos where userId=?', req.user.id, function(err, result) {
-            var todos = JSON.parse(JSON.stringify(result));
-            if (err) throw err;
-            res.render('index', { ejstodo: todos, user: req.user.username });
-        })
-    })
-
-    app.get('/analyse', function(req, res) {
-        res.sendFile(path.join(__dirname, '../views/analyse.html'));
-    })
-
-}
-
-function database(app) {
-
-    app.get('/todo', urlencodedParser, function(req, res) {
-        connection.query('select * from todos', function(err, result) {
-            var todos = JSON.parse(JSON.stringify(result));
-            res.json(todos);
-        })
-    })
-
-    app.post('/todo', urlencodedParser, function(req, res) {
-        var item = {
-            message: req.body.message,
-            date: req.body.date,
-            rating: req.body.rating,
-            completed: false,
-            userId: req.user.id,
-            userName: req.user.username
-        };
-
-        var query = connection.query('insert into todos set ?', item, function(err, result) {})
-        res.send("add success");
-    })
-
-
-    app.delete('/todo/delete/:id', urlencodedParser, function(req, res) {
-        var id = req.params.id;
-
-        connection.query('delete from todos where id=?', id, function(err, result) {})
-
-        res.send("delete todo");
-    });
-
-    app.put('/todo/update/:id', urlencodedParser, function(req, res) {
-        var id = req.params.id,
-            message = req.body.message,
-            date = req.body.date,
-            rating = req.body.rating;
-
-        connection.query('update todos set message=?, date=?, rating=? where id=?', [message, date, rating, id],
-            function(err, result) {})
-
-        res.send('update todo');
-    });
-
-    app.put('/todo/completed/:id', urlencodedParser, function(req, res) {
-        var id = req.params.id;
-
-        connection.query('update todos set completed=true where id=?', id, function(err, result) {
-
-        });
-
-        res.send('completed!');
-    });
-
-    app.put('/todo/incomplete/:id', urlencodedParser, function(req, res) {
-        var id = req.params.id;
-
-        var query = connection.query('update todos set completed=false where id=?', id, function(err, result) {
-
-        });
-        res.send('incomplete!');
-    });
-}
 
 function configuration(app) {
     app.get('/q1', function(req, res) {
@@ -252,7 +126,5 @@ function configuration(app) {
 }
 
 module.exports = {
-    route: route,
-    database: database,
     configuration: configuration
 }
